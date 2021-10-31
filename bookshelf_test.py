@@ -128,9 +128,10 @@ class DemoQA(unittest.TestCase):
         book_page.click_back()
         self.driver.implicitly_wait(5)
         book_page.click_close_ads()
-        book_page.click_profile()
+        #book_page.click_profile()
+        self.driver.get("https://demoqa.com/profile")
         self.driver.implicitly_wait(5)
-        profile_page = page.ProfilePage()
+        profile_page = page.ProfilePage(self.driver)
         self.driver.execute_script('window.scrollBy(0,1000)')
 
         assert profile_page.is_book_added(
