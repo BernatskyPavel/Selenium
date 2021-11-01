@@ -8,16 +8,24 @@ import time
 
 
 class DemoQA(unittest.TestCase):
-    #Sample test case using POM
+    # Sample test case using POM
     def setUp(self):
         firefox_options = Options()
-        #firefox_options.add_argument("--headless")
-        self.driver = webdriver.Firefox(options=firefox_options)
+        # firefox_options.add_argument("--headless")
+        # Для университетской сети
+        PROXY = "172.16.0.101:3128"
+        webdriver.DesiredCapabilities.FIREFOX['proxy'] = {
+            "httpProxy": PROXY,
+            "sslProxy": PROXY,
+            "noProxy": ["127.0.0.1"],
+            "proxyType": "MANUAL",
+        }
+        self.driver = webdriver.Firefox()
         self.driver.maximize_window()
         self.driver.get("https://demoqa.com")
 
     def test_demoqa_login(self):
-        #Visits apress.com
+        # Visits apress.com
         home_page = page.HomePage(self.driver)
         home_page.click_bookstore_menu()
 
@@ -28,7 +36,7 @@ class DemoQA(unittest.TestCase):
         login_page.fill_password("fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+")
         login_page.click_login_button()
         self.driver.implicitly_wait(5)
-        #Checks if page is not empty
+        # Checks if page is not empty
         assert bookstore_page.check_is_logged(), "Not logged!"
 
         bookstore_page.click_logout_button()
@@ -128,7 +136,7 @@ class DemoQA(unittest.TestCase):
         book_page.click_back()
         self.driver.implicitly_wait(5)
         book_page.click_close_ads()
-        #book_page.click_profile()
+        # book_page.click_profile()
         self.driver.get("https://demoqa.com/profile")
         self.driver.implicitly_wait(5)
         profile_page = page.ProfilePage(self.driver)
@@ -140,7 +148,7 @@ class DemoQA(unittest.TestCase):
     def tearDown(self):
         self.driver.close()
 
-    #fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+
+    # fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+
 
 
 if __name__ == "__main__":
