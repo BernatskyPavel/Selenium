@@ -7,13 +7,23 @@ from selenium.webdriver.support import expected_conditions
 
 
 class SearchText(BasePageElement):
-    #The locator for search box where string is entered
+    # The locator for search box where string is entered
     locator = "searchBox"
 
 
 class BasePage(object):
     def __init__(self, driver):
         self.driver = driver
+
+    def __click_element__(self, by, selector):
+        self.driver.find_element(by, selector).click()
+
+    def __input_value__(self, by, selector, value):
+        self.driver.find_element(by, selector).send_keys(value)
+
+    def __check_element__(self, by, selector):
+        return len(
+            self.driver.find_elements(by, selector)) != 0
 
     def click_profile(self):
         elements = self.driver.find_elements(
@@ -23,8 +33,7 @@ class BasePage(object):
         bookstore[2].click()
 
     def click_close_ads(self):
-        element = self.driver.find_element(*BasePageLocators.CLOSE_ADS_BUTTON)
-        element.click()
+        self.__click_element__(*BasePageLocators.CLOSE_ADS_BUTTON)
 
 
 class ProfilePage(BasePage):
@@ -40,40 +49,49 @@ class ProfilePage(BasePage):
 
 
 class HomePage(BasePage):
-    #Action items for Home Page
+    # Action items for Home Page
 
-    #Variable containing retrieved text
+    # Variable containing retrieved text
 
     def click_submit_button(self):
-        #Search is initialized
-        element = self.driver.find_element(*HomePageLocators.SUBMIT_BUTTON)
-        element.click()
+        self.__click_element__(*HomePageLocators.SUBMIT_BUTTON)
 
     def click_bookstore_menu(self):
-        #Search is initialized
-        element = self.driver.find_element(*HomePageLocators.BOOKSHELF_MENU)
-        element.click()
+        self.__click_element__(*HomePageLocators.BOOKSTORE_MENU)
+
+    def click_elements_menu(self):
+        self.__click_element__(*HomePageLocators.ELEMENTS_MENU)
+
+    def click_forms_menu(self):
+        self.__click_element__(*HomePageLocators.FORMS_MENU)
+
+    def click_alerts_menu(self):
+        self.__click_element__(*HomePageLocators.ALERTS_MENU)
+
+    def click_interactions_menu(self):
+        self.__click_element__(*HomePageLocators.INTERACTIONS_MENU)
+
+    def click_widgets_menu(self):
+        self.__click_element__(*HomePageLocators.WIDGETS_MENU)
 
 
 class LoginPage(BasePage):
+
     def fill_username(self, value):
-        element = self.driver.find_element(*LoginPageLocators.USERNAME_INPUT)
-        element.send_keys(value)
+        self.__input_value__(*LoginPageLocators.USERNAME_INPUT, value)
 
     def fill_password(self, value):
-        element = self.driver.find_element(*LoginPageLocators.PASSWORD_INPUT)
-        element.send_keys(value)
+        self.__input_value__(*LoginPageLocators.PASSWORD_INPUT, value)
 
     def click_login_button(self):
-        element = self.driver.find_element(*LoginPageLocators.LOGIN_BUTTON)
-        element.click()
+        self.__click_element__(*LoginPageLocators.LOGIN_BUTTON)
 
 
 class ResultPage(BasePage):
-    #Action items for Result Page
+    # Action items for Result Page
 
     def check_search_result(self):
-        #Checks the result for specified text if found or not
+        # Checks the result for specified text if found or not
         return "No result forund." not in self.driver.page_source
 
 
@@ -82,13 +100,11 @@ class BookStorePage(BasePage):
     search_text = SearchText()
 
     def click_login_button(self):
-        element = self.driver.find_element(*BookStorePageLocators.LOGIN_BUTTON)
-        element.click()
+        self.__click_element__(*BookStorePageLocators.LOGIN_BUTTON)
 
     def click_logout_button(self):
-        element = self.driver.find_element(
+        self.__click_element__(
             *BookStorePageLocators.LOGOUT_BUTTON)
-        element.click()
 
     def check_books_number(self, number):
         elements = self.driver.find_elements(
@@ -96,9 +112,8 @@ class BookStorePage(BasePage):
         return len(elements) == number
 
     def click_book(self, book):
-        element = self.driver.find_element(*BookStorePageLocators.book_link(
+        self.__click_element__(*BookStorePageLocators.book_link(
             book_name=book))
-        element.click()
 
     def change_page_size(self, value):
         element = self.driver.find_element(
@@ -135,26 +150,26 @@ class BookStorePage(BasePage):
 
 
 class BookPage(BasePage):
+
     def is_add_button_exist(self):
-        return len(
-            self.driver.find_elements(*BookPageLocators.ADD_BOOK_BUTTON)) != 0
+        return __check_element__(*BookPageLocators.ADD_BOOK_BUTTON)
 
     def is_back_button_exist(self):
-        return len(
-            self.driver.find_elements(*BookPageLocators.BACK_BUTTON)) != 0
+        return __check_element__(*BookPageLocators.BACK_BUTTON)
 
     def is_login_button_exist(self):
-        return len(
-            self.driver.find_elements(*BookPageLocators.LOGIN_BUTTON)) != 0
+        return __check_element__(*BookPageLocators.LOGIN_BUTTON)
 
     def click_add_book(self):
-        element = self.driver.find_element(*BookPageLocators.ADD_BOOK_BUTTON)
-        element.click()
+        self.__click_element__(*BookPageLocators.ADD_BOOK_BUTTON)
 
     def click_back(self):
-        element = self.driver.find_element(*BookPageLocators.BACK_BUTTON)
-        element.click()
+        self.__click_element__(*BookPageLocators.BACK_BUTTON)
 
     def click_login(self):
-        element = self.driver.find_element(*BookPageLocators.LOGIN_BUTTON)
-        element.click()
+        self.__click_element__(*BookPageLocators.LOGIN_BUTTON)
+
+
+class ElementsPage(BasePage):
+    def is_welcome_page(self):
+        return "Please select an item from left to start practice." in self.driver.page_source

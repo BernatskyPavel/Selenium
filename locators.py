@@ -9,9 +9,14 @@ class BasePageLocators(object):
 
 
 class HomePageLocators(object):
-    #Should contain all locators from main page
+    # Should contain all locators from main page
     SUBMIT_BUTTON = (By.CLASS_NAME, 'search__submit')
-    BOOKSHELF_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][6]")
+    ELEMENTS_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][1]")
+    FORMS_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][2]")
+    ALERTS_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][3]")
+    WIDGETS_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][4]")
+    INTERACTIONS_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][5]")
+    BOOKSTORE_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][6]")
 
 
 class LoginPageLocators(object):
@@ -21,7 +26,7 @@ class LoginPageLocators(object):
 
 
 class BookStorePageLocators(object):
-    #Should contain all locators from main page
+    # Should contain all locators from main page
     LOGOUT_BUTTON = (By.ID, 'submit')
     LOGIN_BUTTON = (By.ID, 'login')
     BOOK_ROW = (By.CLASS_NAME, 'rt-tr-group')
@@ -34,8 +39,8 @@ class BookStorePageLocators(object):
     def book_link(book_name):
         return (By.XPATH, '//*[@id="see-book-' + book_name + '"]/a')
 
-    #//*[@id="see-book-Git Pocket Guide"]/a
-    #//*[@id="app"]/div/div/div[2]/div[2]/div[1]/div[2]/div[1]/div[2]/div[1]
+    # //*[@id="see-book-Git Pocket Guide"]/a
+    # //*[@id="app"]/div/div/div[2]/div[2]/div[1]/div[2]/div[1]/div[2]/div[1]
 
 
 class BookPageLocators(object):
@@ -55,5 +60,5 @@ class ProfilePageLocators(object):
 
 
 class ResultPageLocators(object):
-    #It should contain locators from result page
+    # It should contain locators from result page
     pass
