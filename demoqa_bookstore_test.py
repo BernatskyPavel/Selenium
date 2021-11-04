@@ -32,11 +32,11 @@ class DemoQA(unittest.TestCase):
         bookstore_page = page.BookStorePage(self.driver)
         bookstore_page.click_login_button()
         login_page = page.LoginPage(self.driver)
-        login_page.fill_username("testuser")
-        login_page.fill_password("fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+")
-        login_page.click_login_button()
+
+        login_page.log_in("testuser", "fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+")
+
         self.driver.implicitly_wait(5)
-        # Checks if page is not empty
+
         assert bookstore_page.check_is_logged(), "Not logged!"
 
         bookstore_page.click_logout_button()
@@ -47,27 +47,27 @@ class DemoQA(unittest.TestCase):
         bookstore_page = page.BookStorePage(self.driver)
         self.driver.implicitly_wait(5)
 
-        assert bookstore_page.check_books_number(
-            8), "Number of books is not equal 8!"
+        self.assertEqual(bookstore_page.get_books_number(),
+                         8, "Number of books is not equal 8!")
 
         self.driver.execute_script('window.scrollBy(0,1000)')
         bookstore_page.change_page_size(5)
         self.driver.implicitly_wait(5)
 
-        assert bookstore_page.check_books_number(
-            5), "Number of books is not equal 5!"
+        self.assertEqual(bookstore_page.get_books_number(),
+                         5, "Number of books is not equal 5!")
 
         bookstore_page.click_next_page_button()
 
-        assert bookstore_page.check_books_number(
-            3), "Number of books is not equal 3!"
+        self.assertEqual(bookstore_page.get_books_number(),
+                         3, "Number of books is not equal 3!")
 
         assert bookstore_page.check_no_next_page(), "There is one more page!"
 
         bookstore_page.click_prev_page_button()
 
-        assert bookstore_page.check_books_number(
-            5), "Number of books is not equal 5!"
+        self.assertEqual(bookstore_page.get_books_number(),
+                         5, "Number of books is not equal 5!")
 
         assert bookstore_page.check_no_prev_page(), "There is one more page!"
 
@@ -81,74 +81,86 @@ class DemoQA(unittest.TestCase):
         book_page = page.BookPage(self.driver)
         self.driver.execute_script('window.scrollBy(0,1000)')
 
-        assert not book_page.is_add_button_exist(
+        assert not book_page.is_add_button_on_page(
         ), "Button to add book is on the page!"
 
-        assert book_page.is_login_button_exist(
+        assert book_page.is_login_button_on_page(
         ), "Button to login is not on the page!"
 
         book_page.click_login()
         self.driver.implicitly_wait(5)
         login_page = page.LoginPage(self.driver)
-        login_page.fill_username("testuser")
-        login_page.fill_password("fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+")
-        login_page.click_login_button()
+        login_page.log_in("testuser", "fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+")
+
         self.driver.implicitly_wait(5)
 
-        assert book_page.is_add_button_exist(
+        assert book_page.is_add_button_on_page(
         ), "Button to add book is not on the page!"
 
-        assert not book_page.is_login_button_exist(
+        assert not book_page.is_login_button_on_page(
         ), "Button to login is on the page!"
 
-        self.driver.implicitly_wait(5)
         self.driver.execute_script('window.scrollBy(0,1000)')
 
-        book_page.click_add_book()
         self.driver.implicitly_wait(5)
-        alert = wait(self.driver,
-                     10).until(expected_conditions.alert_is_present())
+        result = book_page.add_book()
+        self.assertEqual(
+            result, "Book added to your collection.", "Book added again!")
 
-        assert alert.text == 'Book added to your collection.', 'Book not added!'
-
-        alert.accept()
         self.driver.implicitly_wait(5)
+        result = book_page.add_book()
+        self.assertEqual(
+            result, "Book already present in the your collection!", "Book added again!")
 
-        assert book_page.is_add_button_exist(
-        ), "Button to add book is not on the page!"
-
-        assert not book_page.is_login_button_exist(
-        ), "Button to login is on the page!"
-
-        assert book_page.is_back_button_exist(
-        ), "Button to back to store is not on the page!"
-
-        book_page.click_add_book()
-        self.driver.implicitly_wait(5)
-        alert = wait(self.driver,
-                     10).until(expected_conditions.alert_is_present())
-
-        assert alert.text == 'Book already present in the your collection!', 'Book added!'
-
-        alert.accept()
-        self.driver.implicitly_wait(5)
-
+        self.driver.implicitly_wait(2)
         book_page.click_back()
+
         self.driver.implicitly_wait(5)
         book_page.click_close_ads()
-        # book_page.click_profile()
-        self.driver.get("https://demoqa.com/profile")
+        self.driver.execute_script('window.scrollBy(0,1000)')
+        book_page.click_profile()
+
         self.driver.implicitly_wait(5)
         profile_page = page.ProfilePage(self.driver)
         self.driver.execute_script('window.scrollBy(0,1000)')
 
-        assert profile_page.is_book_added(
-            'Git Pocket Guide'), 'Book is not added!'
+        self.assertTrue(profile_page.is_book_added(
+            'Git Pocket Guide'), 'Book is missing!')
+
+        result = profile_page.delete_book_cancel('Git Pocket Guide')
+
+        self.assertEqual(
+            result, "Do you want to delete this book?", "Wrong delete message!")
+
+        self.assertTrue(profile_page.is_book_added(
+            'Git Pocket Guide'), 'Book is missing!')
+
+        (modal_text, alert_text) = profile_page.delete_book_ok('Git Pocket Guide')
+
+        self.assertEqual(
+            modal_text, "Do you want to delete this book?", "Wrong delete message!")
+
+        self.assertEqual(
+            alert_text, "Book deleted.", "Wrong alert message!")
+
+        self.driver.implicitly_wait(5)
+        self.assertFalse(profile_page.is_book_added(
+            'Git Pocket Guide'), 'Book is presented!')
+
+        self.driver.implicitly_wait(5)
+        self.driver.execute_script('window.scrollBy(0,-1000)')
+        self.assertTrue(profile_page.is_logout_button_on_page(),
+                        'Log out button is missing!')
+
+        profile_page.logout()
+
+        self.driver.implicitly_wait(5)
+
+        self.assertEqual(self.driver.current_url,
+                         'https://demoqa.com/login', 'Logout fault!')
 
     def tearDown(self):
         self.driver.close()
-
-    # fxSkcKv^6gRxY@sj_bJDXWuqfGN=RnE+
 
 
 if __name__ == "__main__":

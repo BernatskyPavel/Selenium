@@ -3,9 +3,9 @@ from selenium.webdriver.common.by import By
 
 
 class BasePageElement(object):
-    #Used in every page
+    # Used in every page
     def __set__(self, obj, value):
-        #Contains specified text
+        # Contains specified text
         driver = obj.driver
         WebDriverWait(
             driver,

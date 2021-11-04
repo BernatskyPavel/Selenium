@@ -9,7 +9,6 @@ class BasePageLocators(object):
 
 
 class HomePageLocators(object):
-    # Should contain all locators from main page
     SUBMIT_BUTTON = (By.CLASS_NAME, 'search__submit')
     ELEMENTS_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][1]")
     FORMS_MENU = (By.XPATH, "//*[@class='card mt-4 top-card'][2]")
@@ -26,7 +25,6 @@ class LoginPageLocators(object):
 
 
 class BookStorePageLocators(object):
-    # Should contain all locators from main page
     LOGOUT_BUTTON = (By.ID, 'submit')
     LOGIN_BUTTON = (By.ID, 'login')
     BOOK_ROW = (By.CLASS_NAME, 'rt-tr-group')
@@ -37,10 +35,7 @@ class BookStorePageLocators(object):
     NEXT_PAGE_BUTTON_WRAPPER = (By.CLASS_NAME, '-next')
 
     def book_link(book_name):
-        return (By.XPATH, '//*[@id="see-book-' + book_name + '"]/a')
-
-    # //*[@id="see-book-Git Pocket Guide"]/a
-    # //*[@id="app"]/div/div/div[2]/div[2]/div[1]/div[2]/div[1]/div[2]/div[1]
+        return (By.XPATH, f'//*[@id="see-book-{book_name}"]/a')
 
 
 class BookPageLocators(object):
@@ -52,13 +47,17 @@ class BookPageLocators(object):
 
 class ProfilePageLocators(object):
     LOGIN_BUTTON = (By.ID, 'login')
+    LOGOUT_BUTTON_NEI = (By.ID, 'userName-value')
     ALL_BOOKS_ON_PAGE = (By.CSS_SELECTOR, '.rt-tbody > .rt-tr-group > div a')
     DELETE_BUTTON = (By.XPATH, "//*[@id='delete-record-undefined']")
 
+    MODAL_OK_BUTTON = (By.ID, 'closeSmallModal-ok')
+    MODAL_CANCEL_BUTTON = (By.ID, 'closeSmallModal-cancel')
+    MODAL_DIALOG = (By.CLASS_NAME, 'modal-dialog')
+    MODAL_TEXT = (By.CLASS_NAME, 'modal-body')
+
     def book_link(book_name):
-        return (By.XPATH, '//*[@id="see-book-' + book_name + '"]/a')
+        return (By.XPATH, f'//*[@id="see-book-{book_name}"]/a')
 
-
-class ResultPageLocators(object):
-    # It should contain locators from result page
-    pass
+    def book_delete_link(book_name):
+        return (By.XPATH, f".//*[@id='see-book-{book_name}']/../../..//*[@id='delete-record-undefined']")
