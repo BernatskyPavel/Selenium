@@ -11,20 +11,31 @@ from selenium.webdriver.common.action_chains import ActionChains
 class Kalkpro(unittest.TestCase):
     # https://kalk.pro/finish/wallpaper/
     def setUp(self):
+        PROXY = "172.16.0.101:3128"
+        webdriver.DesiredCapabilities.FIREFOX['proxy'] = {
+            "httpProxy": PROXY,
+            "sslProxy": PROXY,
+            "noProxy": ["127.0.0.1"],
+            "proxyType": "MANUAL",
+        }
+
+        # CLASS i-chevron-down
+
         # запуск Firefox при начале каждого теста
         self.driver = webdriver.Firefox()
+        self.driver.maximize_window()
         # открытие страницы при начале каждого теста
         self.driver.get('https://kalk.pro/finish/wallpaper/')
         self.driver.implicitly_wait(5)
         body = self.driver.find_element(By.CLASS_NAME, 'body')
-        ac = ActionChains(self.driver)
-        ac.move_to_element(body)
-        ac.pause(1)
-        ac.click()
-        ac.perform()
+        ActionChains(self.driver).move_to_element(
+            body).pause(1).click().perform()
         wait(self.driver, 60).until(
             expected_conditions.invisibility_of_element(
                 (By.CLASS_NAME, 'js--modal-app-loading')))
+        elems = self.driver.find_elements(By.CLASS_NAME, 'i-chevron-down')
+        if len(elems) != 0:
+            elems[0].click()
         # self.driver.implicitly_wait(15)
 
     def tearDown(self):
@@ -60,6 +71,7 @@ class Kalkpro(unittest.TestCase):
         self.input_walls_data(1, 1, 1)
         # запускаем расчет
         elem = driver.find_element(By.CLASS_NAME, "js--calcModelFormSubmit")
+        driver.execute_script("arguments[0].scrollIntoView(true);", elem)
         elem.click()
         # проверяем наличие результатов расчета
         self.assertIn('Результаты расчета', driver.page_source)
@@ -76,7 +88,8 @@ class Kalkpro(unittest.TestCase):
         # проверяем наличие сообщения об ошибке
         self.assertIn('Ошибки', driver.page_source)
         # проверяем наличие одной ссылки на поле ввода
-        elems = driver.find_element(By.CSS_SELECTOR, "a.js--onclick-goToField")
+        elems = driver.find_elements(
+            By.CSS_SELECTOR, "a.js--onclick-goToField")
         self.assertEqual(len(elems), 1)
 
         # пробуем ввести размер aхbхc (буквы вместо цифр)
@@ -87,7 +100,8 @@ class Kalkpro(unittest.TestCase):
         # проверяем наличие сообщения об ошибке
         self.assertIn('Ошибки', driver.page_source)
         # проверяем наличие трех ссылок на поля ввода
-        elems = driver.find_element(By.CSS_SELECTOR, "a.js--onclick-goToField")
+        elems = driver.find_elements(
+            By.CSS_SELECTOR, "a.js--onclick-goToField")
         self.assertEqual(len(elems), 3)
 
     # метод для проверки работы калькулятора
@@ -112,6 +126,7 @@ class Kalkpro(unittest.TestCase):
         elem.send_keys(1)
         # запускаем расчет
         elem = driver.find_element(By.CLASS_NAME, "js--calcModelFormSubmit")
+        driver.execute_script("arguments[0].scrollIntoView(true);", elem)
         elem.click()
         # проверяем наличие результатов расчета
         self.assertIn('Результаты расчета', driver.page_source)
