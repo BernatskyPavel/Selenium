@@ -11,31 +11,31 @@ from selenium.webdriver.common.action_chains import ActionChains
 class Kalkpro(unittest.TestCase):
     # https://kalk.pro/finish/wallpaper/
     def setUp(self):
-        PROXY = "172.16.0.101:3128"
-        webdriver.DesiredCapabilities.FIREFOX['proxy'] = {
-            "httpProxy": PROXY,
-            "sslProxy": PROXY,
-            "noProxy": ["127.0.0.1"],
-            "proxyType": "MANUAL",
-        }
+        # PROXY = "172.16.0.101:3128"
+        # webdriver.DesiredCapabilities.FIREFOX['proxy'] = {
+        #     "httpProxy": PROXY,
+        #     "sslProxy": PROXY,
+        #     "noProxy": ["127.0.0.1"],
+        #     "proxyType": "MANUAL",
+        # }
 
         # CLASS i-chevron-down
 
         # запуск Firefox при начале каждого теста
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.ChromiumEdge()
         self.driver.maximize_window()
         # открытие страницы при начале каждого теста
         self.driver.get('https://kalk.pro/finish/wallpaper/')
         self.driver.implicitly_wait(5)
-        body = self.driver.find_element(By.CLASS_NAME, 'body')
-        ActionChains(self.driver).move_to_element(
-            body).pause(1).click().perform()
-        wait(self.driver, 60).until(
-            expected_conditions.invisibility_of_element(
-                (By.CLASS_NAME, 'js--modal-app-loading')))
-        elems = self.driver.find_elements(By.CLASS_NAME, 'i-chevron-down')
-        if len(elems) != 0:
-            elems[0].click()
+        # body = self.driver.find_element(By.CLASS_NAME, 'body')
+        # ActionChains(self.driver).move_to_element(
+        #     body).pause(1).click().perform()
+        # wait(self.driver, 60).until(
+        #     expected_conditions.invisibility_of_element(
+        #         (By.CLASS_NAME, 'js--modal-app-loading')))
+        # elems = self.driver.find_elements(By.CLASS_NAME, 'i-chevron-down')
+        # if len(elems) != 0:
+        #     elems[0].click()
         # self.driver.implicitly_wait(15)
 
     def tearDown(self):
@@ -74,6 +74,7 @@ class Kalkpro(unittest.TestCase):
         driver.execute_script("arguments[0].scrollIntoView(true);", elem)
         elem.click()
         # проверяем наличие результатов расчета
+        time.sleep(1)
         self.assertIn('Результаты расчета', driver.page_source)
         # проверяем, что площадь четырех стех размером 1х1 равна 4
         elem = driver.find_element(By.CSS_SELECTOR,
@@ -85,6 +86,7 @@ class Kalkpro(unittest.TestCase):
         # запускаем расчет
         elem = driver.find_element(By.CLASS_NAME, "js--calcModelFormSubmit")
         elem.click()
+        time.sleep(2)
         # проверяем наличие сообщения об ошибке
         self.assertIn('Ошибки', driver.page_source)
         # проверяем наличие одной ссылки на поле ввода
@@ -97,6 +99,7 @@ class Kalkpro(unittest.TestCase):
         # запускаем расчет
         elem = driver.find_element(By.CLASS_NAME, "js--calcModelFormSubmit")
         elem.click()
+        time.sleep(2)
         # проверяем наличие сообщения об ошибке
         self.assertIn('Ошибки', driver.page_source)
         # проверяем наличие трех ссылок на поля ввода
@@ -256,7 +259,8 @@ class Kalkpro(unittest.TestCase):
     def test_calc(self):
         driver = self.driver
         # открываем калькулятор
-        elem = driver.find_element_by_css_selector(".js--onclick-callCalc")
+        elem = driver.find_element(By.CSS_SELECTOR, ".js--onclick-callCalc")
+        #ActionChains(self.driver).move_to_element(elem).pause(1).click().perform()
         elem.click()
         # ждем, пока калькулятор откроется
         time.sleep(5)

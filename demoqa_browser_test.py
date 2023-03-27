@@ -11,16 +11,16 @@ import time
 class DemoQA(unittest.TestCase):
     # Sample test case using POM
     def setUp(self):
-        firefox_options = Options()
+        # firefox_options = Options()
         # firefox_options.add_argument("--headless")
         # Для университетской сети
-        PROXY = "172.16.0.101:3128"
-        webdriver.DesiredCapabilities.FIREFOX['proxy'] = {
-            "httpProxy": PROXY,
-            "sslProxy": PROXY,
-            "noProxy": ["127.0.0.1"],
-            "proxyType": "MANUAL",
-        }
+        # PROXY = "172.16.0.101:3128"
+        # webdriver.DesiredCapabilities.FIREFOX['proxy'] = {
+        #     "httpProxy": PROXY,
+        #     "sslProxy": PROXY,
+        #     "noProxy": ["127.0.0.1"],
+        #     "proxyType": "MANUAL",
+        # }
         self.driver = webdriver.Firefox()
         self.driver.maximize_window()
         self.driver.get("https://demoqa.com")
@@ -28,7 +28,7 @@ class DemoQA(unittest.TestCase):
     def test_demoqa_main(self):
         self.driver.implicitly_wait(5)
         assert self.driver.current_url == 'https://demoqa.com/', 'Wrong page!'
-        assert self.driver.title == 'ToolsQA', 'Wrong title!'
+        assert self.driver.title == 'DEMOQA', 'Wrong title!'
 
         self.driver.get('https://www.toolsqa.com/selenium-training/')
         self.driver.implicitly_wait(5)
@@ -40,7 +40,7 @@ class DemoQA(unittest.TestCase):
         self.driver.implicitly_wait(5)
 
         assert self.driver.current_url == 'https://demoqa.com/', 'Wrong page!'
-        assert self.driver.title == 'ToolsQA', 'Wrong title!'
+        assert self.driver.title == 'DEMOQA', 'Wrong title!'
 
         self.driver.forward()
         self.driver.implicitly_wait(5)
@@ -56,7 +56,7 @@ class DemoQA(unittest.TestCase):
         self.driver.implicitly_wait(5)
 
         assert self.driver.current_url == 'https://demoqa.com/', 'Wrong page!'
-        assert self.driver.title == 'ToolsQA', 'Wrong title!'
+        assert self.driver.title == 'DEMOQA', 'Wrong title!'
 
         self.driver.close()
         self.driver.switch_to.window(original)
